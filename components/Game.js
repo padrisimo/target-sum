@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
+import RandomNumber from './RandomNumber';
 
 class Game extends Component {
   static propTypes = {
     randomNumCount: PropTypes.number.isRequired
+  }
+  state = {
+    selectedNumbers: [0, 4],
   }
   randomNumbers = Array
     .from({ length: this.props.randomNumCount })
@@ -12,13 +16,21 @@ class Game extends Component {
   target = this.randomNumbers
     .slice(0, this.props.randomNumCount - 2)
     .reduce((acc, curr) => acc + curr, 0)
+
+  isNumberSelected = (numberIndex) => {
+    return this.state.selectedNumbers.indexOf(numberIndex) >= 0;
+  };
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.target}>{this.target}</Text>
         <View style={styles.randomContainer}>
           {this.randomNumbers.map((randomNum, i) =>
-            <Text style={styles.random}key={i}>{randomNum}</Text>
+            <RandomNumber
+              key={i}
+              number={randomNum}
+              isSelected={this.isNumberSelected(i)} />
           )}
         </View>
       </View>
@@ -32,7 +44,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   target: {
-    fontSize: 40,
+    fontSize: 50,
     backgroundColor: '#aaa',
     margin: 50,
     textAlign: 'center'
@@ -42,16 +54,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
-  },
-
-  random: {
-    backgroundColor: '#999',
-    width: 100,
-    marginHorizontal: 15,
-    marginVertical: 25,
-    fontSize: 35,
-    textAlign: 'center',
-  },
+  }
 });
 
 export default Game;
