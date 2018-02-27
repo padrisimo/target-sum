@@ -8,7 +8,7 @@ class Game extends Component {
     randomNumCount: PropTypes.number.isRequired
   }
   state = {
-    selectedNumbers: [],
+    selectedIds: [],
   }
   randomNumbers = Array
     .from({ length: this.props.randomNumCount })
@@ -18,14 +18,30 @@ class Game extends Component {
     .reduce((acc, curr) => acc + curr, 0)
 
   isNumberSelected = (numberIndex) => {
-    return this.state.selectedNumbers.indexOf(numberIndex) >= 0;
+    return this.state.selectedIds.indexOf(numberIndex) >= 0;
   };
   selectedNumber = (numberIndex) => {
-    this.setState((prevState) => ({ 
-      selectedNumbers: [...prevState.selectedNumbers, numberIndex]
+    this.setState((prevState) => ({
+      selectedIds: [...prevState.selectedIds, numberIndex]
     }));
   }
+  // gameStatus: PLAYING, WIN, LOST
+  gameStatus = () => {
+    const sumSelected = this.state.selectedIds.reduce((acc, curr) => {
+      return acc + this.randomNumbers[curr];
+    }, 0);
+    if (sumSelected < this.target) {
+      return 'PLAYING';
+    }
+    if (sumSelected === this.target) {
+      return 'WON';
+    }
+    if (sumSelected > this.target) {
+      return 'LOOSE';
+    }
+  }
   render() {
+    const gameStatus = this.gameStatus();
     return (
       <View style={styles.container}>
         <Text style={styles.target}>{this.target}</Text>
@@ -35,10 +51,11 @@ class Game extends Component {
               key={i}
               id={i}
               number={randomNum}
-              isDisabled={this.isNumberSelected(i)} 
-              onPress={this.selectedNumber}/>
+              isDisabled={this.isNumberSelected(i)}
+              onPress={this.selectedNumber} />
           )}
         </View>
+        <Text>{gameStatus}</Text>
       </View>
     );
   }
