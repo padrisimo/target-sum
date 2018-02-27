@@ -10,13 +10,14 @@ export default class RandomNumber extends Component {
     id: PropTypes.number.isRequired
   };
   handlePress = () => {
+    if (this.props.isDisabled) { return; }
     this.props.onPress(this.props.id);
   }
 
   render() {
     return (
       <TouchableOpacity onPress={this.handlePress}>
-        <Text style={[styles.random, this.props.isDisabled && styles.disabled ]}>{this.props.number}</Text>
+        <Text style={[styles.random, this.props.isDisabled && styles.disabled]}>{this.props.number}</Text>
       </TouchableOpacity>
     );
   }
