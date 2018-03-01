@@ -44,14 +44,14 @@ class Game extends Component {
     const gameStatus = this.gameStatus();
     return (
       <View style={styles.container}>
-        <Text style={styles.target}>{this.target}</Text>
+        <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>{this.target}</Text>
         <View style={styles.randomContainer}>
           {this.randomNumbers.map((randomNum, i) =>
             <RandomNumber
               key={i}
               id={i}
               number={randomNum}
-              isDisabled={this.isNumberSelected(i)}
+              isDisabled={this.isNumberSelected(i) || gameStatus !== 'PLAYING' }
               onPress={this.selectedNumber} />
           )}
         </View>
@@ -68,7 +68,6 @@ const styles = StyleSheet.create({
   },
   target: {
     fontSize: 50,
-    backgroundColor: '#aaa',
     margin: 50,
     textAlign: 'center'
   },
@@ -77,7 +76,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
-  }
+  },
+  STATUS_PLAYING:{
+    backgroundColor: '#aaa'    
+  },
+  STATUS_WON:{
+    backgroundColor: 'green'    
+  },
+  STATUS_LOOSE:{
+    backgroundColor: 'red'    
+  },
+  
 });
 
 export default Game;
