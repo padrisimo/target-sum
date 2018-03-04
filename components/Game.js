@@ -12,6 +12,7 @@ class Game extends Component {
     selectedIds: [],
     remainingSeconds: this.props.initialSeconds
   }
+  gameStatus = 'PLAYING';
   randomNumbers = Array
     .from({ length: this.props.randomNumCount })
     .map(() => 1 + Math.floor(10 * Math.random()));
@@ -63,7 +64,7 @@ class Game extends Component {
     }
   }
   render() {
-    const gameStatus = this.gameStatus();
+    const gameStatus = this.gameStatus;
     return (
       <View style={styles.container}>
         <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>{this.target}</Text>
