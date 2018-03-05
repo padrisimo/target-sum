@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import RandomNumber from './RandomNumber';
+import shuffle from 'lodash.shuffle';
 
 class Game extends Component {
   static propTypes = {
@@ -19,6 +20,7 @@ class Game extends Component {
   target = this.randomNumbers
     .slice(0, this.props.randomNumCount - 2)
     .reduce((acc, curr) => acc + curr, 0)
+  shuffledRandomNumbers = shuffle(this.randomNumbers);
 
   componentDidMount() {
     this.intervalId = setInterval(() => {
@@ -46,11 +48,20 @@ class Game extends Component {
     }));
   }
 
-  gameStatus = () => {
-    const sumSelected = this.state.selectedIds.reduce((acc, curr) => {
-      return acc + this.randomNumbers[curr];
+  componentWillUpdate(nextProps, nextState) {
+    if(nextState.selectedIds !== this.state.selectedIds || nextState.remainingSeconds === 0){
+      this.gameStatus = this.setGameStatus(nextState);
+      if(this.gameStatus !== 'PLAYING'){
+        clearInterval(this.intervalId);
+      }
+    }
+  }
+
+  setGameStatus = (nextState) => {
+    const sumSelected = nextState.selectedIds.reduce((acc, curr) => {
+      return acc + this.shuffledRandomNumbers[curr];
     }, 0);
-    if (this.state.remainingSeconds === 0){
+    if (nextState.remainingSeconds === 0){
       return 'LOOSE'; 
     }
     if (sumSelected < this.target) {
@@ -69,7 +80,7 @@ class Game extends Component {
       <View style={styles.container}>
         <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>{this.target}</Text>
         <View style={styles.randomContainer}>
-          {this.randomNumbers.map((randomNum, i) =>
+          {this.shuffledRandomNumbers.map((randomNum, i) =>
             <RandomNumber
               key={i}
               id={i}
